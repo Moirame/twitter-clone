@@ -1,7 +1,11 @@
 class User < ApplicationRecord
+  before_save { self.email = email.downcase }
+  has_secure_password
   validates :name, presence: true
-  validates :email, presence: true
-  validates :password, presence: true
+  #fix this regex
+  validates :email, presence: true,
+  format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i },
+  uniqueness: { case_sensitive: false }
 
   has_many :microposts
   has_many :favorites
@@ -14,4 +18,5 @@ class User < ApplicationRecord
                                    dependent:   :destroy
   has_many :following, through: :active_relationships,  source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
+
 end
